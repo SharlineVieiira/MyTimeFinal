@@ -1,0 +1,92 @@
+unit cCompromissos;
+
+interface
+
+uses FireDAC.Comp.Client, FireDAC.DApt, System.SysUtils, FMX.Graphics;
+
+type
+    TCompromissos = class
+    private
+        Fconn: TFDConnection;
+        FID_COMPROMISSO: Integer;
+        FDESCRICAO: string;
+        FDATA: TDateTime;
+        FLOCAL: string;
+    public
+        constructor Create(conn: TFDConnection);
+        property ID_COMPROMISSO: Integer read FID_COMPROMISSO write FID_COMPROMISSO;
+        property DESCRICAO: string read FDESCRICAO write FDESCRICAO;
+        property DATA: TDateTime read FDATA write FDATA;
+        property LOCAL: string read FLOCAL write FLOCAL;
+
+        //function ListarCompromissos(out erro: string): TFDQuery;
+        function Inserir(out erro: string): Boolean;
+        //function Alterar(out erro: string): Boolean;
+       // function Excluir(out erro: string): Boolean;
+end;
+
+implementation
+
+constructor TCompromissos.Create(conn: TFDConnection);
+begin
+    Fconn := conn;
+end;
+
+
+//INSERIR --------------------------------------------------------------
+function TCompromissos.Inserir(out erro: string): Boolean;
+var
+    qry : TFDQuery;
+begin
+    // Validacoes...
+    if ID_COMPROMISSO <= 0 then
+    begin
+        erro := 'Informe o compromisso';
+        Result := false;
+        exit;
+    end;
+
+    if DESCRICAO = '' then
+    begin
+        erro := 'Informe a descrição';
+        Result := false;
+        exit;
+    end;
+
+
+    try
+        try
+            qry := TFDQuery.Create(nil);
+            qry.Connection := Fconn;
+
+            with qry do
+            begin
+                Active := false;
+                SQL.Clear;
+                SQL.Add('INSERT INTO TAB_COMPROMISSOS(ID_COMPROMISSO, DESCRICAO, DATA_HORA, LOCAL)');
+                SQL.Add('VALUES(:ID_COMPROMISSO, :DESCRICAO, :DATA_HORA, :LOCAL)');
+                ParamByName('ID_COMPROMISSO').Value := ID_COMPROMISSO;
+                ParamByName('DESCRICAO').Value := DESCRICAO;
+                ParamByName('DATA_HORA').Value := DATA;
+                ParamByName('LOCAL').Value := LOCAL;
+                ExecSQL;
+            end;
+
+            Result := true;
+            erro := '';
+
+        except on ex:exception do
+        begin
+            Result := False;
+            erro := 'Erro ao inserir lançamento: ' + ex.Message;
+        end;
+        end;
+
+    finally
+        qry.DisposeOf;
+    end;
+end;
+
+
+
+end.

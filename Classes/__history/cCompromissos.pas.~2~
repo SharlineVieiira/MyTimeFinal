@@ -1,0 +1,32 @@
+unit cCompromissos;
+
+interface
+type
+    TCompromissos = class
+    private
+        Fconn: TFDConnection;
+        FID_CATEGORIA: Integer;
+        FDESCRICAO: string;
+        FICONE: TBitmap;
+        FINDICE_ICONE: Integer;
+    public
+        constructor Create(conn: TFDConnection);
+        property ID_CATEGORIA: Integer read FID_CATEGORIA write FID_CATEGORIA;
+        property DESCRICAO: string read FDESCRICAO write FDESCRICAO;
+        property ICONE: TBitmap read FICONE write FICONE;
+        property INDICE_ICONE: Integer read FINDICE_ICONE write FINDICE_ICONE;
+
+        function ListarCategoria(out erro: string): TFDQuery;
+        function Inserir(out erro: string): Boolean;
+        function Alterar(out erro: string): Boolean;
+        function Excluir(out erro: string): Boolean;
+end;
+
+implementation
+
+uses cCategoria, cLancamento, cUsuario, u99Permissions, uFormat, UnitCategorias,
+  UnitCategoriasCad, UnitComboCategoria, UnitCompromissos, UnitDM,
+  UnitLancamentos, UnitLancamentosCad, UnitLancamentosResumo, UnitLogin,
+  UnitPrincipal;
+
+end.
